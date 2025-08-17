@@ -1,33 +1,34 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb"
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [userType, setUserType] = useState<"user" | "club" | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
+  const { user, isLoading } = useAuth()
 
   useEffect(() => {
-    const type = localStorage.getItem("userType") as "user" | "club" | null
-    if (!type) {
-      router.push("/")
-      return
+    if (!isLoading && !user) {
+      router.push("/login")
     }
-    setUserType(type)
-    setIsLoading(false)
-  }, [router])
+  }, [isLoading, user, router])
+
+  const userType = useMemo<"user" | "club" | null>(() => {
+    if (!user) return null
+    return user.user_type === "CLUB" ? "club" : "user"
+  }, [user])
 
   if (isLoading) {
     return (

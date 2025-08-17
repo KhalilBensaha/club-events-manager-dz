@@ -13,7 +13,11 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-const translations = {
+type TranslationStrings = {
+  [key: string]: string
+}
+
+const translations: Record<Language, TranslationStrings> = {
   english: {
     // Navigation
     "nav.dashboard": "Dashboard",

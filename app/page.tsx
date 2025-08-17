@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Calendar, Users, Sparkles, ArrowRight, Globe, Moon, Sun } from "lucide-react"
+import { Calendar, Users, Sparkles, ArrowRight, Globe, Moon, Sun, LogIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,17 +16,18 @@ export default function HomePage() {
   const { theme, setTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
 
-  useEffect(() => {
-    const savedUserType = localStorage.getItem("userType") as "user" | "club" | null
-    if (savedUserType) {
-      router.push("/dashboard")
-    }
-  }, [router])
+  // useEffect(() => {
+  //   // Check if user is already authenticated
+  //   const token = localStorage.getItem("authToken")
+  //   if (token) {
+  //     router.push("/dashboard")
+  //   }
+  // }, [router])
 
   const handleUserTypeSelect = (type: "user" | "club") => {
     setUserType(type)
-    localStorage.setItem("userType", type)
-    router.push("/dashboard")
+    const mapped = type === "user" ? "PERSON" : "CLUB"
+    router.push(`/register?type=${mapped}`)
   }
 
   const toggleLanguage = () => {
@@ -43,7 +44,7 @@ export default function HomePage() {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold gradient-text">Club Events</h1>
+            <h1 className="text-xl font-bold gradient-text dark:bg-gradient-to-r dark:from-white dark:via-amber-200 dark:to-white dark:bg-clip-text dark:text-transparent dark:bg-[length:200%_100%] dark:motion-safe:animate-shine-fade dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">Club Events</h1>
             <p className="text-sm text-muted-foreground">{t("home.subtitle")}</p>
           </div>
         </motion.div>
@@ -61,6 +62,10 @@ export default function HomePage() {
           <Button variant="outline" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
+          <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white" onClick={() => router.push("/login") }>
+            <LogIn className="w-4 h-4 mr-2" />
+            Login
+          </Button>
         </div>
       </header>
 
@@ -68,10 +73,10 @@ export default function HomePage() {
       <main className="container mx-auto px-6 py-12">
         <div className="text-center mb-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Badge variant="secondary" className="mb-4">
+            {/* <Badge variant="secondary" className="mb-4">
               {t("home.badge")}
-            </Badge>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 gradient-text">{t("home.title")}</h2>
+            </Badge> */}
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 gradient-text dark:bg-gradient-to-r dark:from-white dark:via-amber-200 dark:to-white dark:bg-clip-text dark:text-transparent dark:bg-[length:200%_100%] dark:motion-safe:animate-shine-fade dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">{t("home.title")}</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">{t("home.description")}</p>
           </motion.div>
         </div>
@@ -118,7 +123,6 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </motion.div>
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 border-0 shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 group-hover:from-purple-500/20 group-hover:to-pink-500/20 transition-all duration-300" />

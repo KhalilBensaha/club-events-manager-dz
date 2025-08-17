@@ -20,6 +20,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userType: "user" | "club"
@@ -29,6 +30,7 @@ export function AppSidebar({ userType, ...props }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { t } = useLanguage()
+  const { logout } = useAuth()
 
   const userNavItems = [
     {
@@ -84,8 +86,8 @@ export function AppSidebar({ userType, ...props }: AppSidebarProps) {
   const navItems = userType === "user" ? userNavItems : clubNavItems
 
   const handleLogout = () => {
-    localStorage.removeItem("userType")
-    router.push("/")
+    logout()
+    router.push("/login")
   }
 
   const handleNavigation = (url: string) => {

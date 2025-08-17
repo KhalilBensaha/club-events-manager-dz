@@ -12,10 +12,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
+import api from "@/lib/api"
+import { Button as UIButton } from "@/components/ui/button"
 
 export default function ProfilePage() {
   const { t } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [profile, setProfile] = useState({
     name: "John Doe",
     email: "john.doe@example.com",
@@ -114,6 +117,19 @@ export default function ProfilePage() {
     // Reset form data if needed
   }
 
+  const onUploadImage = async (file?: File) => {
+    if (!file) return
+    setUploading(true)
+    const res = await api.addProfileImage(file)
+    if (res.error) alert(res.error)
+    setUploading(false)
+  }
+
+  const onDeleteImage = async () => {
+    const res = await api.deleteProfileImage()
+    if (res.error) alert(res.error)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -161,6 +177,13 @@ export default function ProfilePage() {
                   {profile.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <label className="text-sm cursor-pointer">
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && onUploadImage(e.target.files[0])} />
+                  <UIButton size="sm" variant="outline">{uploading ? 'Uploading…' : 'Upload'}</UIButton>
+                </label>
+                <UIButton size="sm" variant="outline" onClick={onDeleteImage}>Delete</UIButton>
+              </div>
               <h2 className="text-xl font-semibold mb-1">{profile.name}</h2>
               <p className="text-sm text-muted-foreground mb-4">Member since {profile.joinDate}</p>
               
